@@ -7,7 +7,7 @@ export const darkTheme = createTheme({
       main: '#e91e63', // Pink
     },
     secondary: {
-      main: '#5A20CB', // Cyan
+      main: '#0D0D0D', // Cyan
     },
     black: {
       main: '#0D0D0D', // Black

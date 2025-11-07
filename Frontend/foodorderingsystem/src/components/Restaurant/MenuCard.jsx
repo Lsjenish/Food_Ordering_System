@@ -5,6 +5,9 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Button from '@mui/material/Button';
 import { Checkbox, FormControlLabel, FormGroup } from '@mui/material';
+import { categorizeIngredint } from '../util/categorizeIngredient';
+import { addItemToCart } from '../State/Cart/Action';
+import { useDispatch } from 'react-redux';
 
 const ingredients = [
     {
@@ -17,10 +20,38 @@ const ingredients = [
     }
 ]
 
-const MenuCard = () => {
-    const handleCheckBoxChange = (item) => {
-        console.log(item);
+const MenuCard = ({item}) => {
+
+    const [selectedIngredients , setSelectedIngredients] = React.useState([])
+    const dispatch = useDispatch();
+
+    const handleCheckBoxChange = (itemName) => {
+        console.log("itemName" , itemName)
+        if(selectedIngredients.includes(itemName)){
+            setSelectedIngredients(selectedIngredients.filter((ing) => ing !== itemName))
+        }
+        else{
+            setSelectedIngredients([...selectedIngredients , itemName])
+        }
     }
+
+    const handleAddItemToCart = () => {
+        event.preventDefault();
+        console.log("Selected Ingredients" , selectedIngredients)
+        const reqData= {
+            token : localStorage.getItem("jwt"),
+            cartItem : {
+                foodId : item.id,
+                quantity : 1,
+                ingredients : selectedIngredients,
+
+            }
+        }
+        dispatch(addItemToCart(reqData))
+        console.log("req Data" ,reqData)
+    }
+
+
     return (
         <Accordion>
             <AccordionSummary
@@ -30,26 +61,26 @@ const MenuCard = () => {
             >
                 <div className='lg:flex items-center justify-between'>
                     <div className='lg:flex items-center lg:gap-5'>
-                        <img className='w-[7rem] h-[7rem]' src="https://images.pexels.com/photos/1251198/pexels-photo-1251198.jpeg" alt="" />
+                        <img className='w-[7rem] h-[7rem]' src={item.images[0]} alt="" />
                         <div className='space-y-1 lg:space-y-5 lg:max-w-2xl'>
-                            <p className='font-semibold text-xl'>Burger</p>
-                            <p>₹499</p>
-                            <p className='text-gray-400'>nice food here</p>
+                            <p className='font-semibold text-xl'>{item.name}</p>
+                            <p>₹{item.price}</p>
+                            <p className='text-gray-400'>{item.description}</p>
                         </div>
                     </div>
                 </div>
             </AccordionSummary>
             <AccordionDetails>
-                <form >
+                <form onSubmit={handleAddItemToCart} className='space-y-5' method='put'>
                     <div className='flex flex-wrap gap-5'>
                         {
-                            ingredients.map((item) =>
+                            Object.keys(categorizeIngredint(item.ingredients)).map((category) =>
                                 <div>
-                                    <p>{item.category}</p>
+                                    <p>{category}</p>
                                     <FormGroup>
                                         {
-                                            item.ingredient.map((ingredient) =>
-                                                <FormControlLabel control={<Checkbox onChange={() => handleCheckBoxChange(item)} defaultValue={false} />} label={ingredient} />
+                                            categorizeIngredint(item.ingredients)[category].map((item , idx) =>
+                                                <FormControlLabel key={idx} control={<Checkbox onChange={() => handleCheckBoxChange(item.name)} defaultValue={false} />} label={item.name} />
                                             )
                                         }
                                     </FormGroup>
@@ -58,7 +89,7 @@ const MenuCard = () => {
                         }
                     </div>
                     <div className='pt-5'>
-                        <Button  variant='contained' className='mt-5' disabled = {false} type='submit'>{true ? "Add to Cart" : "Out of Stock"}</Button>
+                        <Button variant='contained' className='mt-5' disabled = {false} type='submit'>{true ? "Add to Cart" : "Out of Stock"}</Button>
                     </div>
                 </form>
             </AccordionDetails>

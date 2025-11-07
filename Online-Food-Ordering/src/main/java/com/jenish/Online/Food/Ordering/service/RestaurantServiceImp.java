@@ -31,7 +31,8 @@ public class RestaurantServiceImp implements RestaurantService{
 	@Override
 	public Restaurant createRestaurant(CreateRestaurantRequest req, User user) {
 		Address address = addressRepository.save(req.getAddress());
-		
+		User dbUser = userRepository.findById(user.getId())
+                .orElseThrow(() -> new RuntimeException("User not found"));
 		Restaurant restaurant = new Restaurant();
 		
 		restaurant.setAddress(req.getAddress());
@@ -42,7 +43,7 @@ public class RestaurantServiceImp implements RestaurantService{
 		restaurant.setName(req.getName());
 		restaurant.setOpeningHours(req.getOpeningHours());
 		restaurant.setRegistrationDate(LocalDateTime.now());
-		restaurant.setOwner(user);
+		restaurant.setOwner(dbUser);
 		
 		return restaurantRepository.save(restaurant);
 	}

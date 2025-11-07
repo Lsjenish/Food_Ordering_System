@@ -25,7 +25,7 @@ import lombok.NoArgsConstructor;
 public class IngredientCategory {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
 	
@@ -35,6 +35,8 @@ public class IngredientCategory {
 	@JsonIgnore
 	private Restaurant restaurant;
 	
+	
+	@JsonIgnore
 	@OneToMany(mappedBy = "category" , cascade = CascadeType.ALL)
 	private List<IngredientsItem> ingredientsIntem = new ArrayList<>();
 	

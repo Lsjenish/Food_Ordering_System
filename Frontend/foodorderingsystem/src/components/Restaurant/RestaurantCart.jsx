@@ -1,32 +1,50 @@
-import React from 'react'
+import React, { use } from 'react'
 import {Card, Chip, IconButton} from '@mui/material'
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { addToFavorite } from '../State/Authentication/Action';
+import { isPresentInFavorites } from '../config/logic';
 
-const RestaurantCart = () => {
+const RestaurantCart = ({item}) => {
+    const  navigate = useNavigate()
+    const dispatch = useDispatch()
+    const auth = useSelector(store => store.auth)
+    const jwt = localStorage.getItem("jwt")
+    const handleAddToFavorite = () => {
+        dispatch(addToFavorite(jwt ,item.id))
+    }
+
+    const handleNavigateToRestaurant = () => {
+        if(item.open){
+            navigate(`/restaurant/${item.address.city}/${item.name}/${item.id}`)
+        }
+    }
+
   return (
     <div>
-        <Card className='w-[18rem]'>
-            <div className={`${true ? 'cursor-pointer' : 'cursor-not-allowed'} relative`}>
-                <img className='w-full h-[10rem] rounded-t-md object-cover'
-                src="https://images.pexels.com/photos/1449773/pexels-photo-1449773.jpeg" alt="" />
+        <Card   className='w-[18rem]'>
+            <div className={`${item.open ? 'cursor-pointer' : 'cursor-not-allowed'} relative`}>
+                <img onClick={handleNavigateToRestaurant} className='w-full h-[10rem] rounded-t-md object-cover'
+                src={item.images[1]} alt="" />
                 <Chip 
                     size='small'
                     className='absolute top-2 left-2'
-                    color={true ? "success" : "error"}
-                    label={true ? "Open Now" : "Closed"}
+                    color={item.open ? "success" : "error"}
+                    label={item.open ? "Open Now" : "Closed"}
 
                 />
                 <div className='p-4 textPart  lg:flex w-full justify-between'>
                     <div className='space-y-1'>
-                        <p className='font-semibold text-lg'>Indian Fast Food</p>
+                        <p  onClick={handleNavigateToRestaurant} className='font-semibold hover:text-blue-400 text-lg'>{item.name}</p>
                         <p className='text-gray-500 text-sm'>
-                            Craving it all? Dive into our global fla...
+                            {item.description}
                         </p>
                     </div>
                     <div>
-                        <IconButton >
-                            {true ? <FavoriteIcon/> : <FavoriteBorderIcon /> }
+                        <IconButton onClick={handleAddToFavorite}>
+                            {isPresentInFavorites(auth.favorites , item) ? <FavoriteIcon sx={{color:"red"}} /> : <FavoriteBorderIcon /> }
                         </IconButton>
                     </div>
                 </div>

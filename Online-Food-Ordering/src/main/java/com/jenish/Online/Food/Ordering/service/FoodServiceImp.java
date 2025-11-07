@@ -1,5 +1,6 @@
 package com.jenish.Online.Food.Ordering.service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -32,6 +33,7 @@ public class FoodServiceImp implements FoodService{
 		food.setPrice(req.getPrice());
 		food.setSeasonal(req.isSeasional());
 		food.setVegiterian(req.isVegetarian());
+		food.setCreatedAt(new Date());
 		
 		Food savedFood = foodRepository.save(food);
 		restaurant.getFoods().add(savedFood);

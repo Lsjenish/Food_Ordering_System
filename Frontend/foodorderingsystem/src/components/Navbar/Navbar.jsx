@@ -6,13 +6,24 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import Badge from '@mui/material/Badge';
 
 import './NavBar.css'
+import { Box } from '@mui/material';
+import { Person } from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 const Navbar = () => {
+  const {cart ,auth} = useSelector(store => store)
+  const navigate = useNavigate();
+  const handleAvatarClick = ()=>{
+    if(auth.user.role === "ROLE_CUSTOMER"){
+      navigate("/my-profile")
+    }
+  }
   return (
-    <div className='px-5 z-50 py-[.8rem] bg-[#e91e63] lg:px-20 flex justify-between'>
+    <Box className='px-5 sticky top-0 z-50 py-[.8rem] bg-[#e91e63] lg:px-20 flex justify-between'>
       {/* Logo and Search Bar */}
           <div className='lg:mr-10 cursor-pointer flex items-center space-x-4'>
-            <li className='logo font-semibold text-gray-300 text-2xl'>
+            <li onClick={() => navigate("/")} className='logo select-none font-semibold text-gray-300 text-2xl'>
               Munch Food
             </li>
           </div>
@@ -23,11 +34,14 @@ const Navbar = () => {
               </IconButton>
             </div>
             <div className=''>
-              <Avatar sx={{bgcolor : "white" , color : "#e91e63" }}>C</Avatar>
+            {auth.user ? <Avatar onClick={handleAvatarClick} sx={{bgcolor : "white" , color : "#e91e63" }}>{auth.user?.fullName[0].toUpperCase()}</Avatar> 
+            : <IconButton onClick={() => navigate("/account/login")}>
+              <Person />
+              </IconButton>}
             </div>
             <div className=''>
-              <IconButton>
-                  <Badge color="primary" badgeContent={3} >
+              <IconButton onClick={() => navigate("/cart")}>
+                  <Badge color="secondary" badgeContent={cart.cart?.items.length} >
                     <ShoppingCartIcon sx={{ fontSize : "1.5rem" }} />
                   </Badge>
                   
@@ -35,7 +49,7 @@ const Navbar = () => {
             </div>
           </div>
 
-    </div>
+    </Box>
   )
 }
 

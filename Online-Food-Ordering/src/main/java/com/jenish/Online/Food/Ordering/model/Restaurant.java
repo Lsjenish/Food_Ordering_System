@@ -14,6 +14,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
@@ -29,10 +30,11 @@ import lombok.NoArgsConstructor;
 public class Restaurant {
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
 	@OneToOne
+	@JoinColumn(name = "owner_id", nullable = false)
 	private User owner;
 	
 	
@@ -50,6 +52,7 @@ public class Restaurant {
 	
 	private String openingHours;
 	
+	@JsonIgnore
 	@OneToMany(mappedBy = "restaurant" , cascade = CascadeType.ALL , orphanRemoval = true)
 	private List<Order> orders = new ArrayList<>();
 
@@ -59,7 +62,7 @@ public class Restaurant {
 	
 	private LocalDateTime registrationDate;
 	
-	private boolean open;
+	private boolean open = true;
 	
 	@JsonIgnore
 	@OneToMany(mappedBy = "restaurant" , cascade = CascadeType.ALL , orphanRemoval = true)

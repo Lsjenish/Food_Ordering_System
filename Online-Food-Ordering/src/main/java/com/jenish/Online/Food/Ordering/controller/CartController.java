@@ -74,7 +74,7 @@ public class CartController {
 		User user = userService.findUserByJwtTocken(jwt);
 		Cart cartItem = cartService.findCartByUserId(user.getId());
 		
-		return new ResponseEntity<Cart>(cartItem , HttpStatus.CREATED);
+		return new ResponseEntity<Cart>(cartItem , HttpStatus.OK);
 	}
 	
 }
